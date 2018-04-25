@@ -1,9 +1,11 @@
 #!/usr/bin/ruby
 # This script gets last 5 authors of a file and writes them at the end of the file.
 
-# Get several entries from git log for specified file.
-def git_log(file)
-  `git log -5 --pretty=format:"%an;%ae" #{file}`
+class Git
+  # Get several entries from git log for specified file.
+  def self.log(file)
+    `git log -5 --pretty=format:"%an;%ae" #{file}`
+  end
 end
 
 def md_mailto(a, e)
@@ -19,7 +21,7 @@ files = Dir.glob File.join('*', '**', '*.md')
 files.each do |f|
   author_md = Hash.new
 
-  git_log(f).each_line do |line|
+  Git.log(f).each_line do |line|
     author, mail = line.split(';')
 
     author_md[author] = mail unless author_md.key?(author)

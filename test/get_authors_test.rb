@@ -38,7 +38,7 @@ class TestGetAuthors < Minitest::Test
 
   def test_git_log
     require "#{@original_dir}/get_authors.rb"
-    method_output = git_log File.join(@subdir, 'README.md')
+    method_output = Git.log File.join(@subdir, 'README.md')
     assert_equal "Your Name;you@example.com", method_output
   end
 
