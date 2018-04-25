@@ -1,6 +1,8 @@
 require "minitest/autorun"
 require "fileutils"
 
+require_relative "../get_authors.rb"
+
 class TestGetAuthors < Minitest::Test
   def setup
     @original_dir = Dir.pwd
@@ -37,7 +39,6 @@ class TestGetAuthors < Minitest::Test
   end
 
   def test_git_log
-    require "#{@original_dir}/get_authors.rb"
     method_output = Git.log File.join(@subdir, 'README.md')
     assert_equal "Your Name;you@example.com", method_output
   end

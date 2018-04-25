@@ -16,23 +16,30 @@ def md_center(text)
   '{:center: style="text-align: center"}' + "\n#{text}\n{:center}"
 end
 
-files = Dir.glob File.join('*', '**', '*.md')
+def main
+  files = Dir.glob File.join('*', '**', '*.md')
 
-files.each do |f|
-  author_md = Hash.new
+  files.each do |f|
+    author_md = Hash.new
 
-  Git.log(f).each_line do |line|
-    author, mail = line.split(';')
+    Git.log(f).each_line do |line|
+      author, mail = line.split(';')
 
-    author_md[author] = mail unless author_md.key?(author)
+      author_md[author] = mail unless author_md.key?(author)
+    end
+    author_md = author_md.map { |a, e| md_mailto(a, e) }
+
+    output = author_md.join ', '
+    output = "Authors: #{output}"
+    output = md_center output
+
+    File.open(f, 'a') do |file|
+      file.write "\n#{output}"
+    end
   end
-  author_md = author_md.map { |a, e| md_mailto(a, e) }
+end
 
-  output = author_md.join ', '
-  output = "Authors: #{output}"
-  output = md_center output
 
-  File.open(f, 'a') do |file|
-    file.write "\n#{output}"
-  end
+if File.identical?(__FILE__, $0)
+  main
 end
