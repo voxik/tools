@@ -6,6 +6,16 @@ class Git
   def self.log(file)
     `git log -5 --pretty=format:"%an;%ae" #{file}`
   end
+
+  def self.author_email(file)
+    author_email = Hash.new
+    self.log(file).each_line do |line|
+      author, mail = line.strip.split(';')
+
+      author_email[author] = mail unless author_email.key?(author)
+    end
+    author_email
+  end
 end
 
 def md_mailto(a, e)
@@ -20,14 +30,7 @@ def main
   files = Dir.glob File.join('*', '**', '*.md')
 
   files.each do |f|
-    author_md = Hash.new
-
-    Git.log(f).each_line do |line|
-      author, mail = line.split(';')
-
-      author_md[author] = mail unless author_md.key?(author)
-    end
-    author_md = author_md.map { |a, e| md_mailto(a, e) }
+    author_md = Git.author_email(f).map { |a, e| md_mailto(a, e) }
 
     output = author_md.join ', '
     output = "Authors: #{output}"

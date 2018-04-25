@@ -43,6 +43,13 @@ class TestGetAuthors < Minitest::Test
     assert_equal "Your Name;you@example.com", method_output
   end
 
+  def test_latest_author_email_is_used
+    output = "Your Name;you@example.com\nYour Name;me@example.com"
+    Git.stub :log, output do
+      assert_equal({"Your Name"=>"you@example.com"}, Git.author_email(Minitest::Mock.new))
+    end
+  end
+
   def test_that_it_writes_authors_once
     skip
   end
