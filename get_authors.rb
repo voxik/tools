@@ -17,9 +17,14 @@ end
 files = Dir.glob File.join('*', '**', '*.md')
 
 files.each do |f|
-  author_mail = git_log(f).split(/[;\n]/).each_slice(2).to_h.sort
+  author_md = Hash.new
 
-  author_md = author_mail.collect { |a, e| md_mailto(a, e) }
+  git_log(f).each_line do |line|
+    author, mail = line.split(';')
+
+    author_md[author] = mail unless author_md.key?(author)
+  end
+  author_md = author_md.map { |a, e| md_mailto(a, e) }
 
   output = author_md.join ', '
   output = "Authors: #{output}"
