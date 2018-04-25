@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 # This script gets last 5 authors of a file and writes them at the end of the file.
 
-# Get last 5 authors of a file and their email
-def get_authors(file)
-  `git log -5 --pretty=format:"%an;%ae" #{file}`.split(/[;\n]/)
+# Get several entries from git log for specified file.
+def git_log(file)
+  `git log -5 --pretty=format:"%an;%ae" #{file}`
 end
 
 def md_mailto(a, e)
@@ -17,7 +17,7 @@ end
 files = Dir.glob File.join('*', '**', '*.md')
 
 files.each do |f|
-  author_mail = get_authors(f).each_slice(2).to_h.sort
+  author_mail = git_log(f).split(/[;\n]/).each_slice(2).to_h.sort
 
   author_md = author_mail.collect { |a, e| md_mailto(a, e) }
 
