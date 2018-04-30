@@ -14,18 +14,24 @@ def md_center(text)
   '{:center: style="text-align: center"}' + "\n#{text}\n{:center}"
 end
 
-files = Dir.glob File.join('*', '**', '*.md')
+def main
+	files = Dir.glob File.join('*', '**', '*.md')
 
-files.each do |f|
-  author_mail = get_authors(f).each_slice(2).to_h.sort
+	files.each do |f|
+		author_mail = get_authors(f).each_slice(2).to_h.sort
 
-  author_md = author_mail.collect { |a, e| md_mailto(a, e) }
+		author_md = author_mail.collect { |a, e| md_mailto(a, e) }
 
-  output = author_md.join ', '
-  output = "Authors: #{output}"
-  output = md_center output
+		output = author_md.join ', '
+		output = "Authors: #{output}"
+		output = md_center output
 
-  File.open(f, 'a') do |file|
-    file.write "\n#{output}"
-  end
+		File.open(f, 'a') do |file|
+			file.write "\n#{output}"
+		end
+	end
+end
+
+if File.identical?(__FILE__, $0)
+  main
 end
