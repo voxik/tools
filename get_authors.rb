@@ -18,23 +18,25 @@ class Git
 	end
 end
 
-def md_mailto(a, e)
-  "[#{a}](mailto:#{e})"
-end
+class Markdown
+	def self.mailto(a, e)
+		"[#{a}](mailto:#{e})"
+	end
 
-def md_center(text)
-  '{:center: style="text-align: center"}' + "\n#{text}\n{:center}"
+	def self.center(text)
+		'{:center: style="text-align: center"}' + "\n#{text}\n{:center}"
+	end
 end
 
 def main
   files = Dir.glob File.join('*', '**', '*.md')
 
   files.each do |f|
-    author_md = Git.author_email(f).map { |a, e| md_mailto(a, e) }
+    author_md = Git.author_email(f).map { |a, e| Markdown.mailto(a, e) }
 
     output = author_md.join ', '
     output = "Authors: #{output}"
-    output = md_center output
+    output = Markdown.center output
 
     File.open(f, 'a') do |file|
       file.write "\n#{output}"

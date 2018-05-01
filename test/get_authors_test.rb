@@ -50,6 +50,16 @@ class TestGetAuthors < Minitest::Test
     end
   end
 
+	def test_markdown_mailto
+		author, email = "Your Name", "you@example.com"
+		assert_match "[Your Name](mailto:you@example.com)", Markdown.mailto(author, email)
+	end
+
+	def test_markdown_center
+		text = 'foo'
+		assert_match %Q|{:center: style="text-align: center"}\nfoo\n{:center}|, Markdown.center(text)
+	end
+
   def test_that_it_writes_authors_once
     skip
   end
