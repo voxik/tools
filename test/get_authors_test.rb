@@ -1,6 +1,8 @@
 require "minitest/autorun"
 require "fileutils"
 
+require_relative "../get_authors.rb"
+
 class TestGetAuthors < Minitest::Test
   def setup
     @original_dir = Dir.pwd
@@ -36,10 +38,16 @@ class TestGetAuthors < Minitest::Test
     assert_match %Q|\n{:center: style=\"text-align: center\"}\nAuthors: [Your Name](mailto:you@example.com)\n{:center}|, content
   end
 
-  def test_get_authors
-    require "#{@original_dir}/get_authors.rb"
-    method_output = get_authors File.join(@subdir, 'README.md')
-    assert_equal ['Your Name', 'you@example.com'], method_output
+  def test_git_log
+    method_output = Git.log File.join(@subdir, 'README.md')
+    assert_equal "Your Name;you@example.com", method_output
+  end
+
+  def test_latest_author_email_is_used
+    output = "Your Name;you@example.com\nYour Name;me@example.com"
+    Git.stub :log, output do
+      assert_equal({"Your Name"=>"you@example.com"}, Git.author_email(Minitest::Mock.new))
+    end
   end
 
   def test_that_it_writes_authors_once
