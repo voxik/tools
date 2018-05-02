@@ -3,18 +3,29 @@
 
 # Get last 5 authors of a file and their email
 module Git
+  # TODO: change name
+  class Log
+    def initialize (log)
+      @log = log
+    end
+
+    def author_email
+      author_email = Hash.new
+      @log.each_line do |line|
+        author, mail = line.strip.split(';')
+
+        author_email[author] = mail unless author_email.key?(author)
+      end
+      author_email
+    end
+
+    def to_s
+      @log
+    end
+  end
+
 	def self.log(file)
-		`git log -5 --pretty=format:"%an;%ae" #{file}`
-	end
-
-	def self.author_email(file)
-		author_email = Hash.new
-		self.log(file).each_line do |line|
-			author, mail = line.strip.split(';')
-
-			author_email[author] = mail unless author_email.key?(author)
-		end
-		author_email
+    Log.new(`git log -5 --pretty=format:"%an;%ae" #{file}`)
 	end
 end
 
@@ -32,7 +43,7 @@ def main
   files = Dir.glob File.join('*', '**', '*.md')
 
   files.each do |f|
-    author_md = Git.author_email(f).map { |a, e| Markdown.mailto(a, e) }
+    author_md = Git.log(f).author_email.map { |a, e| Markdown.mailto(a, e) }
 
     output = author_md.join ', '
     output = "Authors: #{output}"
