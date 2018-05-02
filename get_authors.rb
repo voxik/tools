@@ -2,7 +2,7 @@
 # This script gets last 5 authors of a file and writes them at the end of the file.
 
 # Get last 5 authors of a file and their email
-class Git
+module Git
 	def self.log(file)
 		`git log -5 --pretty=format:"%an;%ae" #{file}`
 	end
@@ -18,7 +18,7 @@ class Git
 	end
 end
 
-class Markdown
+module Markdown
 	def self.mailto(a, e)
 		"[#{a}](mailto:#{e})"
 	end
